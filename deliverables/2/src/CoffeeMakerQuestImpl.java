@@ -43,7 +43,7 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 		// TODO
 		if (!rooms.isEmpty() || room == null) return false;
 		rooms.add(room);
-		
+		System.out.println("1st room added " + room + "\n" + room.getDescription());
 		return true;
 	}
 
@@ -82,6 +82,7 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 	public Room getCurrentRoom() {
 		// TODO
 		if (inRoom == -1) return null;
+		System.out.println("players in " + rooms.get(inRoom));
 		return rooms.get(inRoom);
 	}
 	
