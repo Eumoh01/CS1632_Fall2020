@@ -34,27 +34,27 @@ public class CoffeeMakerQuestTest {
 		cmq.setPlayer(player);
 		// TODO: 3. Create mock Rooms and assign to room1, room2, ..., room6.
 		// Mimic the furnishings / adjectives / items of the rooms in the original Coffee Maker Quest.
-		Room room1 = Mockito.mock(Room.class); 
+		room1 = Mockito.mock(Room.class); 
 		Mockito.when(room1.getFurnishing()).thenReturn("Quaint sofa");
 		Mockito.when(room1.getItem()).thenReturn(Item.CREAM);
 		Mockito.when(room1.getAdjective()).thenReturn("Small");
-		Room room2 = Mockito.mock(Room.class); 
+		room2 = Mockito.mock(Room.class); 
 		Mockito.when(room2.getFurnishing()).thenReturn("Sad record player");
 		Mockito.when(room2.getAdjective()).thenReturn("Funny");
 		Mockito.when(room2.getItem()).thenReturn(Item.NONE);
-		Room room3 = Mockito.mock(Room.class);
+		room3 = Mockito.mock(Room.class);
 		Mockito.when(room3.getFurnishing()).thenReturn("Tight pizza");
 		Mockito.when(room3.getAdjective()).thenReturn("Refinanced");
 		Mockito.when(room3.getItem()).thenReturn(Item.COFFEE);
-		Room room4 = Mockito.mock(Room.class);
+		room4 = Mockito.mock(Room.class);
 		Mockito.when(room4.getFurnishing()).thenReturn("Flat energy drink");
 		Mockito.when(room4.getAdjective()).thenReturn("Dumb");
 		Mockito.when(room4.getItem()).thenReturn(Item.NONE);
-		Room room5 = Mockito.mock(Room.class);
+		room5 = Mockito.mock(Room.class);
 		Mockito.when(room5.getFurnishing()).thenReturn("Beautiful bag of money");
 		Mockito.when(room5.getAdjective()).thenReturn("Bloodthirsty");
 		Mockito.when(room5.getItem()).thenReturn(Item.NONE);
-		Room room6 = Mockito.mock(Room.class);
+		room6 = Mockito.mock(Room.class);
 		Mockito.when(room6.getFurnishing()).thenReturn("Perfect air hockey table");
 		Mockito.when(room6.getAdjective()).thenReturn("Rough");
 		Mockito.when(room6.getItem()).thenReturn(Item.SUGAR);
@@ -140,8 +140,8 @@ public class CoffeeMakerQuestTest {
 		Mockito.when(myRoom.getItem()).thenReturn(Item.NONE);
 		boolean res = cmq.addRoomAtNorth(myRoom, "North", "South");
 		assertEquals(false, res);
-		Mockito.verify(room6).setNorthDoor("North");
-		Mockito.verify(myRoom).setSouthDoor("South");
+		Mockito.verify(room6, Mockito.never()).setNorthDoor("North");
+		Mockito.verify(myRoom, Mockito.never()).setSouthDoor("South");
 	}
 	
 	/**
@@ -177,7 +177,7 @@ public class CoffeeMakerQuestTest {
 		boolean res = cmq.setCurrentRoom(room3);
 		Room res2 = cmq.getCurrentRoom();
 		assertTrue(res);
-		assertEquals("room3", res2);
+		assertEquals(room3, res2);
 	}
 	
 	/**
