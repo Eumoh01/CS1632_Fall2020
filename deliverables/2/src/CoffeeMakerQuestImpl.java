@@ -43,6 +43,7 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 		// TODO
 		if (!rooms.isEmpty() || room == null) return false;
 		rooms.add(room);
+		System.out.println("romsize is " + rooms.size());
 		System.out.println("1st room added " + room + "\n" + room.getDescription());
 		return true;
 	}
@@ -69,7 +70,9 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 			if (room.getFurnishing().equals(rooms.get(i).getFurnishing()) || room.getAdjective().equals(rooms.get(i).getAdjective())) return false;
 		}
 		rooms.get(rooms.size()-1).setNorthDoor(northDoor);
+		rooms.add(room);
 		room.setSouthDoor(southDoor);
+		System.out.println("romsize is " + rooms.size());
 		return true;
 	}
 
@@ -83,6 +86,7 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 		// TODO
 		if (inRoom == -1) return null;
 		System.out.println("players in " + rooms.get(inRoom));
+		System.out.println("inRoom2 is " + inRoom);
 		return rooms.get(inRoom);
 	}
 	
@@ -96,7 +100,8 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 	public boolean setCurrentRoom(Room room) {
 		// TODO
 		if (rooms.contains(room)) {
-			inRoom = rooms.indexOf(room);
+			inRoom = rooms.indexOf(room); 
+			System.out.println("inRoom is " + inRoom);
 			return true;
 		}
 		return false;
@@ -155,15 +160,19 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 					res = "You don't see anything out of the ordinary.\n";
 							break;
 				} else if (item == Item.COFFEE) {
+					player.addItem(item);
 					res = "There might be something here...\nYou found some caffeinated coffee!\n";
 					break;
 				} else if (item == Item.COFFEE) {
+					player.addItem(item);
 					res = "There might be something here...\nYou found some caffeinated coffee!\n";
 					break;
 				} else if (item == Item.CREAM) {
+					player.addItem(item);
 					res = "There might be something here...\nYou found some caffeinated coffee!\n";
 					break;
 				} else if (item == Item.SUGAR) {
+					player.addItem(item);
 					res = "There might be something here...\nYou found some sweet sugar!\n";
 					break;
 				}
