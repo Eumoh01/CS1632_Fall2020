@@ -5,6 +5,8 @@ import org.junit.*;
 import org.mockito.*;
 import static org.mockito.Mockito.*;
 
+import java.lang.reflect.Method;
+
 public class CoffeeMakerQuestTest {
 
 	CoffeeMakerQuest cmq;
@@ -31,6 +33,7 @@ public class CoffeeMakerQuestTest {
 		Mockito.when(player.checkCoffee()).thenReturn(false);
 		Mockito.when(player.checkCream()).thenReturn(false);
 		Mockito.when(player.checkSugar()).thenReturn(false);
+		Mockito.when(player.getInventoryString()).thenReturn("");
 		cmq.setPlayer(player);
 		// TODO: 3. Create mock Rooms and assign to room1, room2, ..., room6.
 		// Mimic the furnishings / adjectives / items of the rooms in the original Coffee Maker Quest.
@@ -189,8 +192,25 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandI() {
 		// TODO
+		Mockito.when(player.getInventoryString()).thenReturn("YOU HAVE NO COFFEE!\nYOU HAVE NO CREAM!\nYOU HAVE NO SUGAR!\n");
 		String res = cmq.processCommand("I");
 		assertEquals("YOU HAVE NO COFFEE!\nYOU HAVE NO CREAM!\nYOU HAVE NO SUGAR!\n", res);
+		
+	}
+	
+	@Test
+	public void testProcessCommandH() {
+		// TODO
+		String res = cmq.processCommand("H");
+		assertEquals("N - Go north\nS - Go south\nL - Look and collect any items in the room\nI - Show inventory of items collected\nD - Drink coffee made from items in inventory\n", res);
+		
+	}
+	
+	@Test
+	public void testProcessCommandInvalid() {
+		// TODO
+		String res = cmq.processCommand("Y");
+		assertEquals("What?\n", res);
 		
 	}
 	
@@ -205,13 +225,20 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandLCream() {
 		// TODO
-		Mockito.when(cmq.setCurrentRoom(room1)).thenReturn(true);
-		Mockito.verify(cmq).setCurrentRoom(room1);
+		cmq.setCurrentRoom(room1);
 		String res = cmq.processCommand("l");
 		assertEquals("There might be something here...\nYou found some creamy cream!\n", res);
 		Mockito.verify(player).addItem(Item.CREAM);
 	}
 	
+	@Test
+	public void testProcessCommandLCoffee() {
+		// TODO
+		cmq.setCurrentRoom(room3);
+		String res = cmq.processCommand("l");
+		assertEquals("There might be something here...\nYou found some caffeinated coffee!\n", res);
+		Mockito.verify(player).addItem(Item.COFFEE);
+	}
 	/**
 	 * Test case for String processCommand("n").
 	 * Preconditions: room1 ~ room6 have been added to cmq.
@@ -224,13 +251,22 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandN() {
 		// TODO
-		CoffeeMakerQuest cmq2 = Mockito.mock(CoffeeMakerQuest.class);
-		Mockito.when(cmq2.setCurrentRoom(room4)).thenReturn(true);
-		Mockito.verify(cmq2).setCurrentRoom(room4);
+		cmq.setCurrentRoom(room4);
 		String res = cmq.processCommand("n");
 		Room res2 = cmq.getCurrentRoom();
 		assertEquals("", res);
 		assertEquals(room5, res2);
+		
+	}
+	
+	@Test
+	public void testProcessCommandNInvalid() {
+		// TODO
+		cmq.setCurrentRoom(room6);
+		String res = cmq.processCommand("n");
+		Room res2 = cmq.getCurrentRoom();
+		assertEquals("A door in that direction does not exist.\n", res);
+		assertEquals(room6, res2);
 		
 	}
 	
@@ -246,8 +282,7 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandS() {
 		// TODO
-		Mockito.when(cmq.setCurrentRoom(room1)).thenReturn(true);
-		Mockito.verify(cmq).setCurrentRoom(room1);
+		cmq.setCurrentRoom(room1);
 		String res = cmq.processCommand("s");
 		Room res2 = cmq.getCurrentRoom();
 		assertEquals("A door in that direction does not exist.\n", res);
@@ -265,6 +300,7 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandDLose() {
 		// TODO
+		Mockito.when(player.getInventoryString()).thenReturn("YOU HAVE NO COFFEE!\nYOU HAVE NO CREAM!\nYOU HAVE NO SUGAR!\n");
 		String res = cmq.processCommand("D");
 		boolean res2 = cmq.isGameOver();
 		assertEquals("YOU HAVE NO COFFEE!\nYOU HAVE NO CREAM!\nYOU HAVE NO SUGAR!\n\nYou drink the air, as you have no coffee, sugar, or cream.\nThe air is invigorating, but not invigorating enough. You cannot study.\nYou lose!\n", res);
@@ -282,7 +318,6 @@ public class CoffeeMakerQuestTest {
 	@Test
 	public void testProcessCommandDWin() {
 		// TODO
-		player = Mockito.mock(Player.class);
 		Mockito.when(player.checkCoffee()).thenReturn(true);
 		Mockito.when(player.checkCream()).thenReturn(true);
 		Mockito.when(player.checkSugar()).thenReturn(true);
@@ -290,6 +325,63 @@ public class CoffeeMakerQuestTest {
 		boolean res2 = cmq.isGameOver();
 		assertEquals("You have a cup of delicious coffee.\nYou have some fresh cream.\nYou have some tasty sugar.\n\nYou drink the beverage and are ready to study!\nYou win!\n", res);
 		assertEquals(true, res2);
+	}
+	@Test
+	public void testProcessCommandDLose2() {
+		// TODO
+		Mockito.when(player.checkCoffee()).thenReturn(true);
+		Mockito.when(player.checkCream()).thenReturn(false);
+		Mockito.when(player.checkSugar()).thenReturn(true);
+		Mockito.when(player.getInventoryString()).thenReturn("You have a cup of delicious coffee.\nYOU HAVE NO CREAM!\nYou have some tasty sugar.\n");
+		String res = cmq.processCommand("D");
+		boolean res2 = cmq.isGameOver();
+		assertEquals("You have a cup of delicious coffee.\nYOU HAVE NO CREAM!\nYou have some tasty sugar.\n\nWithout cream, you get an ulcer and cannot study.\nYou lose!\n", res);
+		assertEquals(true, res2);
+	}
+	
+	@Test
+	public void testProcessCommandDLose3() {
+		// TODO
+		Mockito.when(player.checkCoffee()).thenReturn(false);
+		Mockito.when(player.checkCream()).thenReturn(true);
+		Mockito.when(player.checkSugar()).thenReturn(true);
+		Mockito.when(player.getInventoryString()).thenReturn("YOU HAVE NO COFFEE!\nYou have some fresh cream.\nYou have some tasty sugar.\n");
+		String res = cmq.processCommand("D");
+		boolean res2 = cmq.isGameOver();
+		assertEquals("YOU HAVE NO COFFEE!\nYou have some fresh cream.\nYou have some tasty sugar.\n\nYou drink the sweetened cream, but without caffeine you cannot study.\nYou lose!\n", res);
+		assertEquals(true, res2);
+	}
+
+	@Test
+	public void testProcessCommandLSugar() {
+		// TODO
+		cmq.setCurrentRoom(room6);
+		String res = cmq.processCommand("l");
+		assertEquals("There might be something here...\nYou found some sweet sugar!\n", res);
+		Mockito.verify(player).addItem(Item.SUGAR);
+	}
+	
+	@Test
+	public void testProcessCommandLNone() {
+		// TODO
+		cmq.setCurrentRoom(room2);
+		String res = cmq.processCommand("l");
+		assertEquals("You don't see anything out of the ordinary.\n", res);
+	}
+	
+	@Test
+	public void testfun() {
+		Object retval = "";
+		try {
+			Method privateMethod = CoffeeMakerQuestImpl.class.getDeclaredMethod("fun");
+			privateMethod.setAccessible(true);
+			retval = privateMethod.invoke(cmq);
+		}
+		catch(Exception e) {
+			System.err.println(e);
+		}
+		String expected = "This game is fun!";
+		assertEquals(expected, retval);
 	}
 	
 	// TODO: Put in more unit tests of your own making to improve coverage!
