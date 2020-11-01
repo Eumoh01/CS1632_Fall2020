@@ -141,14 +141,16 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 				inRoom++;
 				if (inRoom >= rooms.size()) {
 					res = "A door in that direction does not exist.\n";
+					inRoom--;
 					break;
 				}
-				res = "\n";
+				res = "";
 				break;
 			case "S": 
 				inRoom--;
 				if (inRoom < 0) {
 					res = "A door in that direction does not exist.\n";
+					inRoom++;
 					break;
 				}
 				res = "\n";
@@ -163,13 +165,9 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 					player.addItem(item);
 					res = "There might be something here...\nYou found some caffeinated coffee!\n";
 					break;
-				} else if (item == Item.COFFEE) {
-					player.addItem(item);
-					res = "There might be something here...\nYou found some caffeinated coffee!\n";
-					break;
 				} else if (item == Item.CREAM) {
 					player.addItem(item);
-					res = "There might be something here...\nYou found some caffeinated coffee!\n";
+					res = "There might be something here...\nYou found some creamy cream!\n";
 					break;
 				} else if (item == Item.SUGAR) {
 					player.addItem(item);
@@ -206,6 +204,9 @@ public class CoffeeMakerQuestImpl implements CoffeeMakerQuest {
 				res = "What?\n";
 		}
 		return res;
+	}
+	private String fun() {
+		return "This game is fun!";
 	}
 	
 }
