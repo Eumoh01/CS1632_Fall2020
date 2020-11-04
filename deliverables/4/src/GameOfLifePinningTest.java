@@ -33,7 +33,11 @@ public class GameOfLifePinningTest {
 	 */
 
 	/* TODO: Declare all variables required for the test fixture. */
-
+	MainPanel panel;
+	Cell[][] table;
+	Cell cell1;
+	Cell cell2;
+	Cell cell3;
 	@Before
 	public void setUp() {
 		/*
@@ -44,8 +48,60 @@ public class GameOfLifePinningTest {
 		 * https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#/media/File:Game_of_life_blinker.gif
 		 * Start from the vertical bar on a 5X5 matrix as shown in the GIF.
 		 */
+		table = new Cell[5][5];
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				table[i][j] = Mockito.mock(Cell.class);
+			}
+		}
+		cell1 = Mockito.mock(Cell.class);
+		Mockito.when(cell1.getAlive()).thenReturn(true);
+		cell2 = Mockito.mock(Cell.class);
+		Mockito.when(cell2.getAlive()).thenReturn(true);
+		cell3 = Mockito.mock(Cell.class);
+		Mockito.when(cell3.getAlive()).thenReturn(true);
+		table[1][2] = cell1;
+		table[2][2] = cell2;
+		table[3][2] = cell3;
+		panel = new MainPanel(5);
+		panel.setCells(table);
 	}
-
 	/* TODO: Write the three pinning unit tests for the three optimized methods */
-
+	@Test
+	public void testCellToString() {
+		Cell newCell = new Cell();
+		newCell.setAlive(false);
+		assertEquals(".", newCell.toString());
+		newCell.setAlive(true);
+		assertEquals("X", newCell.toString());
+	}
+	
+	@Test
+	public void testIterateCell() {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				boolean truthValue = panel.iterateCell(i, j);
+				if (i==2 && (j==1 || j==2 || j==3)) {
+					assertTrue(truthValue);
+				} else  {
+					assertFalse(truthValue);
+				}
+			}
+		}
+	}
+	
+	@Test
+	public void testCalculateNextIteration() {
+		panel.calculateNextIteration();
+		Cell[][] newTable = panel.getCells();
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (i==2 && (j==1 || j==2 || j==3)) {
+					Mockito.verify(newTable[i][j], times(1)).setAlive(true);
+				} else  {
+					Mockito.verify(newTable[i][j], times(1)).setAlive(false);
+				}
+			}
+		}
+	}
 }
